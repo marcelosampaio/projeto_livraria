@@ -1,0 +1,23 @@
+# Variáveis de ambiente
+.env
+
+# Ambiente virtual
+venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# VSCode
+.vscode/
+
+# MacOS
+.DS_Store
+
+# Arquivos de log
+*.log
+
+# Arquivos gerados
+*.csv
