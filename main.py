@@ -1,57 +1,26 @@
-import requests
-import csv
-
-from bs4 import BeautifulSoup
+from extracao import extrair_html
+from transformacao import extrair_livros
+from carga import salvar_csv
 
 # target url
 URL = "http://books.toscrape.com/"
 
-# http request
-resposta = requests.get(URL)
+def main():
+    print("início ETL")
 
-# response status code
-if resposta.status_code != 200:
-    print(f"Erro no http request. Status code: {resposta.status_code}")
-    exit()
-    
-print("Conexão bem-sucedida!")
+    html = extrair_html(URL)
 
-# beatifulsoap object
-soup = BeautifulSoup(resposta.text, "html.parser")
+    if not html:
+        print("Nenhuma informação extraída.")
+        return
 
-# html parsing
-print(soup.title.string.strip())
+    dados = extrair_livros(html)
 
-# procurando por livros
-livros_html = soup.find_all("article", class_="product_pod")
+    # persistir dados em arquivo csv
+    salvar_csv(dados)
 
-# quantidade de livros encontrados
-print(f"Quantidade de livros encontrados: {len(livros_html)}")
+    print("Processo finalizado!")
 
-# lista com os dados extraídos
-dados_extraidos = []
 
-# loop pelos livros
-for livro in livros_html:
-    titulo = livro.h3.a["title"]
-    preco = livro.find("p", class_="price_color").text.strip()
-    
-    # criando dicionário
-    livro_dict = {
-        "titulo": titulo,
-        "preco": preco
-    }
-    
-    # adicionando na lista
-    dados_extraidos.append(livro_dict)
-
-# geracao de arquivo csv
-with open("relatorio_livros.csv", mode="w", newline="", encoding="utf-8") as arquivo:
-    colunas = ["titulo", "preco"]
-    
-    writer = csv.DictWriter(arquivo, fieldnames=colunas)
-    
-    writer.writeheader()
-    writer.writerows(dados_extraidos)
-
-print("Relatório CSV gerado com sucesso!")
+if __name__ == "__main__":
+    main()
