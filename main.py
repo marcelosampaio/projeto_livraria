@@ -1,4 +1,6 @@
 import requests
+import csv
+
 from bs4 import BeautifulSoup
 
 # target url
@@ -43,5 +45,13 @@ for livro in livros_html:
     # adicionando na lista
     dados_extraidos.append(livro_dict)
 
-# exibindo resultado final
-print(dados_extraidos)
+# geracao de arquivo csv
+with open("relatorio_livros.csv", mode="w", newline="", encoding="utf-8") as arquivo:
+    colunas = ["titulo", "preco"]
+    
+    writer = csv.DictWriter(arquivo, fieldnames=colunas)
+    
+    writer.writeheader()
+    writer.writerows(dados_extraidos)
+
+print("Relatório CSV gerado com sucesso!")
